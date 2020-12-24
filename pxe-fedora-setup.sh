@@ -3,7 +3,9 @@
 iso_directory=/services/pxe-server/isos
 boot_directory=/services/pxe-server/tftpboot
 
-sudo su
+echo "Making ISO Directory"
+
+mkdir -p /services/pxe-server/isos
 
 cd $iso_directory
 
@@ -27,10 +29,12 @@ cp /mnt/LiveOS/* /var/www/html/fedora
 
 echo "Update menu"
 
+
+
 echo "label fedora
-  menu label Fedora Workstation 
+  menu label Fedora Workstation Live
   kernel fedora/vmlinuz
   append initrd=fedora/initrd.img boot=live union=overlay components noswap noprompt keyboard-layouts=en locales=en_GB.UTF-8 root=live:http://192.168.0.192/fedora/squashfs.img
-"
+" >> $boot_directory/pxelinux.cfg/default
 
-exit
+systemctl restart dnsmasq.service
