@@ -3,10 +3,8 @@
 boot_directory="/services/pxe-server/tftpboot"
 iso_directory="/services/pxe-server/isos"
 
-sudo su
-
 echo "Downloading Required Packages"
-apt install pxelinux dnsmasq syslinux ufw apache2
+apt install pxelinux dnsmasq syslinux-efi ufw apache2
 
 echo "Applying firewall settings"
 ufw allow http
@@ -20,7 +18,7 @@ mkdir -p $iso_directory
 echo "Copying from required library files"
 cp /lib/syslinux/modules/efi64/ldlinux.e64 $boot_directory
 cp /lib/syslinux/modules/efi64/{libutil,menu}.c32 $boot_directory
-cp /lib/SYSLINUX.EFI/efi64/systemlinux.efi $boot_directory
+cp /lib/SYSLINUX.EFI/efi64/syslinux.efi $boot_directory
 echo "Editing dnsmasq.conf"
 
 echo "port=0 # Disable DNS with port 0
@@ -43,6 +41,5 @@ menu title Boot Menu
   localboot 0
 " > $boot_directory/pxelinux.cfg/default
 
-
-exit
+systemctl restart dnsmasq.service
 
